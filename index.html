@@ -1,0 +1,263 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="containeir">
+        Jawaban 1 : <b id="jawaban1"></b> <BR>
+        Jawaban 2 : <b id="jawaban2"></b> <BR>
+        Jawaban 3 : <b id="jawaban3"></b>
+    </div>
+</body>
+
+<script>
+    $('#getData').click(function () {
+        console.log(solution($('#record').val()));
+        $('#answer').html("");
+        $('#answer').append(solution($('#record').val()));
+    });
+
+    $('#getData2').click(function () {
+        console.log(solution2($('#stages').val(), $('#ttlUser').val()));
+        $('#answer2').html("");
+        $('#answer2').append(solution2($('#stages').val(), $('#ttlUser').val()));
+    });
+
+    $(document).ready(function () {
+        var data1 = [];
+        var data2 = [];
+        var data3 = ['[][]'];
+        var data4 = '';
+
+        var answer1 = '';
+        var answer2 = '';
+        var answer3 = '';
+
+        data1 = ["Enter uid1234 Muzi", "Enter uid4567 Prodo", "Leave uid1234", "Enter uid1234 Prodo", "Change uid4567 Ryan"];
+        answer1 = solution(data1);
+        console.log(answer1);
+        $('#jawaban1').append(answer1);
+
+        data2 = [2, 1, 2, 6, 2, 4, 3, 3];
+        answer2 = solution2(5, data2);
+        console.log(answer2);
+        $('#jawaban2').append(answer2);
+
+        data3 = [['100', 'ryan', 'music', '2'], ['200', 'apeach', 'math', '2'], ['300', 'tube', 'computer', '3'], ['400', 'con', 'computer', '4'], ['500', 'muzi', 'music', '3'], ['600', 'apeach', 'music', '2']]
+        answer3 = solution3(data3);
+        console.log(answer3);
+        $('#jawaban3').append(answer3);
+
+
+        console.log(solution4(5000));
+        solution5();
+    });
+
+    function solution(record) {
+        var answer = [];
+        var data = [];
+
+        $.each(record, function (x, y) {
+            data.push(y.split(' '));
+        });
+
+        var count = 0;
+        $.each(data, function (q, w) {
+            if (w[0] == 'Enter') {
+                if (answer.length > 0) {
+                    for (var g = 0; g < answer.length; g++) {
+                        if (typeof answer[g] != 'undefined') {
+                            if (answer[g]['id'] == w[1]) {
+                                answer[g] = {
+                                    id: w[1],
+                                    name: w[2],
+                                    status: answer[g]['status']
+                                };
+                            } else {
+                                answer[q] = {
+                                    id: w[1],
+                                    name: w[2],
+                                    status: 'came in.'
+                                };
+                            }
+                        }
+                    }
+                } else {
+                    answer[q] = {
+                        id: w[1],
+                        name: w[2],
+                        status: 'came in.'
+                    };
+                }
+            } else if (w[0] == 'Leave') {
+                for (var c = 0; c < answer.length; c++) {
+                    if (w[1] == answer[c]['id']) {
+                        answer[q] = {
+                            id: w[1],
+                            name: answer[c]['name'],
+                            status: 'has left.'
+                        };
+                    }
+                }
+            } else if (w[0] == 'Change') {
+                for (var v = 0; v < answer.length; v++) {
+                    if (typeof answer[v] != 'undefined') {
+                        if (w[1] == answer[v]['id']) {
+                            answer[v]['name'] = w[2];
+                        }
+                    }
+                }
+            }
+        });
+
+        for (v = 0; v < answer.length; v++) {
+            if (typeof answer[v] != 'undefined') {
+                answer[v] = answer[v]['name'] + ' ' + answer[v]['status'];
+            }
+        }
+
+        var final = [];
+
+        for (var m = 0; m < answer.length; m++) {
+            if (typeof answer[m] !== 'undefined') {
+                final.push(answer[m]);
+            }
+        }
+        return final;
+    }
+
+    function solution2(n, arrUser) {
+
+        // var arrUser = [];
+        var failureRate = '';
+        var countUser = 0;
+        var arrFailureRate = [];
+        var arrAnswer = [];
+
+        // users = users.replace(/,\s*$/, "");
+        // arrUser = users.split(',').sort();
+
+        if (arrUser.length > 21) {
+            swal({
+                text: "melebihi batas maximum, mohon ulangi",
+            });
+
+            $('#ttlUser').val('');
+            $('#ttlUser').focus();
+            return false;
+        }
+
+        for (var level = 1; level <= n; level++) {
+            for (var sc = 0; sc < arrUser.length; sc++) {
+                if (arrUser[sc] == level) {
+                    countUser += 1; /* to count user who are playing in the current level */
+                }
+            }
+
+            failureRate += '\n Stage ' + level + ' Failure Rate:' + countUser + '/' + arrUser.length + ' \n';
+            arrFailureRate[level - 1] = {
+                level: level,
+                rate: countUser / arrUser.length
+            };
+
+            arrUser.splice(0, countUser); /*to reduce user who can't pass through the next stage*/
+            countUser = 0; /* to reset user count */
+        }
+        arrFailureRate.sort(function (a, b) {
+            return a.rate > b.rate ? -1 : (a.rate == b.rate ? 0 : 1);
+        });
+
+        $.each(arrFailureRate, function (x, y) {
+            arrAnswer.push(y.level);
+        });
+
+        return arrAnswer.join(',');
+    }
+
+    function solution3(relation) {
+        var answer = 0;
+        var data = [];
+
+        $.each(relation, function (x, y) {
+            data[x] = {
+                id: y[0],
+                name: y[1],
+                major: y[2],
+                grade: y[3]
+            };
+        });
+
+        const result = [];
+        const map = new Map();
+        for (const item of data) {
+            if (!map.has(item.id)) {
+                map.set(item.id, true);    // set any value to Map
+                if (!map.has(item.name)) {
+                    map.set(item.name, true);    // set any value to Map
+                    if (!map.has(item.major)) {
+                        map.set(item.major, true);    // set any value to Map
+                        if (!map.has(item.grade)) {
+                            map.set(item.grade, true);    // set any value to Map
+                            result.push({
+                                id: item.id,
+                                name: item.name,
+                                major: item.major,
+                                grade: item.grade
+                            });
+                        }
+                    }
+                }
+            }
+        }
+        answer = result.length;
+        return answer;
+    }
+
+    function solution4(data) {
+        var notSelfNumber = [];
+        var selfNumber = [];
+        var sumSelfNumber = 0;
+
+        for (var z = 1; z < data; z++) {
+            notSelfNumber.push(d(z));
+        }
+
+        for (var x = 1; x < data; x++) {
+            if (!notSelfNumber.includes(x)) {
+                selfNumber.push(x);
+            }
+        }
+
+        sumSelfNumber = selfNumber.reduce((a, b) => parseInt(a) + parseInt(b));
+
+        // console.log('sumSelfNumber', sumSelfNumber);
+
+        return sumSelfNumber;
+    }
+
+    function d(n) {
+        var splitN;
+        var splitVal = 0;
+        var ttlVal = 0;
+
+        splitN = n.toString().split('');
+        $.each(splitN, function (x, y) {
+            splitVal += parseInt(y);
+        });
+
+        ttlVal = n + splitVal;
+
+        return ttlVal;
+    }
+
+</script>
+
+</html>
