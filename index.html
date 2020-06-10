@@ -301,18 +301,17 @@
         var canPlace = 'yes';
         var allEmpty = 'yes';
         var currentY;
-        var checkBeore = [];
-        for (var yy = 0; yy < matrix.length; yy++) {
-            for (var xx = 0; xx < matrix[yy].length; xx++) {
-                if (matrix[yy][xx] == 'EMPTY') {
+        for (var col = 0; col < matrix.length; col++) {
+            for (var row = 0; row < matrix[col].length; row++) {
+                if (matrix[col][row] == 'EMPTY') {
                     allEmpty = 'yes';
-                    for (var v = 0; v <= yy; v++) {
-                        if (matrix[v][xx] == 'GUNMEN') {
+                    for (var resetCol = 0; resetCol <= col; resetCol++) {
+                        if (matrix[resetCol][row] == 'GUNMEN') {
                             canPlace = 'no';
                             allEmpty = 'no';
                         }
 
-                        if (matrix[v][xx] == 'WALL') {
+                        if (matrix[resetCol][row] == 'WALL') {
                             canPlace = 'yes'
                             allEmpty = 'no';
                         }
@@ -323,22 +322,22 @@
                     }
 
                     if (canPlace == 'yes') {
-                        for (var g = 0; g <= xx; g++) {
-                            if (matrix[yy][g] == 'GUNMEN') {
+                        for (var resetRow = 0; resetRow <= row; resetRow++) {
+                            if (matrix[col][resetRow] == 'GUNMEN') {
                                 canPlace = 'no';
                             }
 
-                            if (matrix[yy][g] == 'WALL') {
+                            if (matrix[col][resetRow] == 'WALL') {
                                 canPlace = 'yes';
                             }
                         }
                     }
 
                     if (canPlace == 'yes') {
-                        matrix[yy][xx] = 'GUNMEN';
+                        matrix[col][row] = 'GUNMEN';
                         canPlace = 'no';
                     }
-                } else if (matrix[yy][xx] == 'WALL') {
+                } else if (matrix[col][row] == 'WALL') {
                     canPlace = 'yes';
                 }
             }
