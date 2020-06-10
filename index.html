@@ -299,14 +299,46 @@
 
     function placeGunmen(cell, matrix) {
         var canPlace = 'yes';
+        var allEmpty = 'yes';
+        var currentY;
+        var checkBeore = [];
         for (var yy = 0; yy < matrix.length; yy++) {
             for (var xx = 0; xx < matrix[yy].length; xx++) {
                 if (matrix[yy][xx] == 'EMPTY') {
-                    if (matrix[yy - 1][xx] != 'GUNMEN') {
+                    allEmpty = 'yes';
+                    for (var v = 0; v <= yy; v++) {
+                        if (matrix[v][xx] == 'GUNMEN') {
+                            canPlace = 'no';
+                            allEmpty = 'no';
+                        }
+
+                        if (matrix[v][xx] == 'WALL') {
+                            canPlace = 'yes'
+                            allEmpty = 'no';
+                        }
+                    }
+
+                    if (allEmpty == 'yes') {
+                        canPlace = 'yes';
+                    }
+
+                    if (canPlace == 'yes') {
+                        for (var g = 0; g <= xx; g++) {
+                            if (matrix[yy][g] == 'GUNMEN') {
+                                canPlace = 'no';
+                            }
+
+                            if (matrix[yy][g] == 'WALL') {
+                                canPlace = 'yes';
+                            }
+                        }
+                    }
+
+                    if (canPlace == 'yes') {
                         matrix[yy][xx] = 'GUNMEN';
                         canPlace = 'no';
                     }
-                } else {
+                } else if (matrix[yy][xx] == 'WALL') {
                     canPlace = 'yes';
                 }
             }
