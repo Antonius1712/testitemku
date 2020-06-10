@@ -260,11 +260,18 @@
 
 
     function solution5() {
-        makeWall();
+        var wall = [];
+        var matrix = [];
+        var cell = [8, 8];
+        var gunmen = [];
+        wall = makeWalls(wall);
+        matrix = makeMatrix(matrix, cell, wall);
+        gunmen = placeGunmen(cell, matrix);
+
+        console.log('gunmen = ', gunmen);
     }
 
-    function makeWall() {
-        var wall = [];
+    function makeWalls(wall) {
         wall[0] = [1, 3, 5];
         wall[1] = [5];
         wall[2] = [0, 2, 5, 7];
@@ -273,6 +280,38 @@
         wall[5] = [5, 7];
         wall[6] = [1];
         wall[7] = [4, 6];
+        return wall;
+    }
+
+    function makeMatrix(matrix, cell, wall) {
+        for (var y = 0; y < cell[1]; y++) {
+            matrix[y] = [];
+            for (var x = 0; x < cell[0]; x++) {
+                if (matrix[y][x] !== 'undefined') {
+                    matrix[y][x] = wall[y].includes(x) ? 'WALL' : 'EMPTY';
+                } else {
+                    matrix[y][x] = 'E';
+                }
+            }
+        }
+        return matrix;
+    }
+
+    function placeGunmen(cell, matrix) {
+        var canPlace = 'yes';
+        for (var yy = 0; yy < matrix.length; yy++) {
+            for (var xx = 0; xx < matrix[yy].length; xx++) {
+                if (matrix[yy][xx] == 'EMPTY') {
+                    if (matrix[yy - 1][xx] != 'GUNMEN') {
+                        matrix[yy][xx] = 'GUNMEN';
+                        canPlace = 'no';
+                    }
+                } else {
+                    canPlace = 'yes';
+                }
+            }
+        }
+        return matrix;
     }
 
 </script>
